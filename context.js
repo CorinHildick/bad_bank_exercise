@@ -27,6 +27,16 @@ function Card(props) {
 }
 
 function AccountCard(props) {
+	// This is a form component for all account management.
+	// That means I use this for both the create account and login pages
+	// The properties I input:
+	//		Whether this is creating an account or logging in
+	//		isCreate (boolean)
+	//		whether to show the form or the completed form
+	//		which I use on the login page when the user is already logged in
+	//		show (boolean)
+	//		and two strongs of text, which aren't strictly necessary and could be handled by isCreate
+
 	const ctx = React.useContext(UserContext);
 	
 	const [show, setShow] 			= React.useState(props.show);
@@ -43,6 +53,9 @@ function AccountCard(props) {
 		if (!props.isCreate) {
 			ctx.currentUserIndex = -1
 		}
+		// the clearForm function gets called to either make a new account or log out of the existing account
+		// If the user is on the login page, they just pressed the log out button
+		// so I set the user index to no account
 	}
 
 	function validate(field, label){
@@ -59,7 +72,8 @@ function AccountCard(props) {
 		if (!validate(name, 'name')) return;
 		if (!validate(email, 'email')) return;
 		if (!validate(password, 'password')) return;
-		// disabeled for convenient testing; re-enable in final stretches
+		// I disabled the password length check for convenient testing
+		// then nearly forgot to re-enable it
 		if (password.length < 8) {
 			setStatus('Error: Password must be 8 or more characters');
 			setTimeout(() => setStatus(''), 3000);
@@ -71,6 +85,7 @@ function AccountCard(props) {
 	}
 
 	function handleLogin() {
+		// This is a bit of spaghetti code, but we weren't expected to have a login function at all, so I think it's good enough
 		let closestMatch = 0
 		console.log(name,email,password)
 		if (!validate(name, 'name')) return;
@@ -116,6 +131,8 @@ function AccountCard(props) {
 	}
 
 	return (
+		// I use the same format for creating an account and logging in
+		// I copied the tructure from the starter code for create account, but added several property-dependent bits
 		<Card
 			bgcolor="primary"
 			header={props.defaultText}
@@ -129,6 +146,7 @@ function AccountCard(props) {
 					Password<br/>
 					<input type="input" className="form-control" id="password" placeholder="Enter password" value={password} onChange={e => setPassword(e.currentTarget.value)} /><br/>
 
+					
 					{(name || email || password) && (<button type="submit" className="btn btn-light" onClick={props.isCreate ? handleCreate : handleLogin}>{props.defaultText}</button>)}
 				</>
 			) : (
@@ -142,6 +160,8 @@ function AccountCard(props) {
 }
 
 function ModifyBalanceCard(props) {
+	// I used a different function to handle the transactions, instead of increasing the flexibility of the first.
+	// This actually went much easier than handling the login information.
 	const ctx = React.useContext(UserContext);
 
 	if (ctx.currentUserIndex == -1) {
@@ -195,6 +215,7 @@ function ModifyBalanceCard(props) {
 			setTimeout(() => setStatus(''), 3000);
 			return false;
 		}
+		// Here's the check for whether this is a number or not. This one took me a bit to figure out.
 		if (!Number.isFinite(Number(value))) {
 			setStatus('Error: Not a Number');
 			setTimeout(() => setStatus(''), 3000);
@@ -209,6 +230,10 @@ function ModifyBalanceCard(props) {
 	}
 	
 	return (
+		// The reason checking whether the input was a number took me a while to check is pretty silly.
+		// I had changed the input type from "text" to "number"
+		// so if I had characters in there, there was no input at all
+		// and the submit button didn't show up
 		<Card
 			bgcolor="light"
 			txtcolor="dark"
@@ -219,7 +244,7 @@ function ModifyBalanceCard(props) {
 					<p>{`Current Balance: $${ctx.users[ctx.currentUserIndex].balance}`}</p>
 					{`${props.defaultText} Amount: `}<br/>
 					<input type="text" className="form-control" id="value" placeholder="Enter an amount" value={value} onChange={e => setValue(e.currentTarget.value)} /><br/>
-
+					
 					{(value) && (<button type="submit" className="btn btn-dark" onClick={handleTransfer}>{props.defaultText}</button>)}
 				</>
 			) : (
@@ -232,6 +257,9 @@ function ModifyBalanceCard(props) {
 	)
 }
 
+// here's how I toggled the active page in the navbar
+// each page calls this function for itself
+// it removes the last active link, then adds its own
 function activatePage(page) {
 	const navRemove = document.getElementsByClassName("active")[0];
 	if (navRemove) {
