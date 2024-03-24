@@ -60,11 +60,11 @@ function AccountCard(props) {
 		if (!validate(email, 'email')) return;
 		if (!validate(password, 'password')) return;
 		// disabeled for convenient testing; re-enable in final stretches
-		// if (password.length < 8) {
-		// 	setStatus('Error: Password must be 8 or more characters');
-		// 	setTimeout(() => setStatus(''), 3000);
-		// 	return;
-		// }
+		if (password.length < 8) {
+			setStatus('Error: Password must be 8 or more characters');
+			setTimeout(() => setStatus(''), 3000);
+			return;
+		}
 		ctx.currentUserIndex = ctx.users.length;
 		ctx.users.push({name, email, password, balance:100, transactions:['Initial Starting Balance: $100']});
 		setShow(false);
